@@ -4,40 +4,42 @@ import axios from 'axios';
 import Loading from '../Components/Loading';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
+import {useFocusEffect} from '@react-navigation/native';
 
 const LeaderBoard = ({navigation}) => {
   const user = useSelector(state => state.UserRedux.user);
   const [currentUser, setCurrentUser] = useState({});
   const [users, setUsers] = useState([]);
+  const url1 = 'http://10.30.230.117:3031';
+  const url2 = 'http://192.168.100.2:3031';
   let index = 0;
   const [currentTop, setCurrentTop] = useState();
 
   const fetchAllUsers = async () => {
     await axios
-      .get('http://192.168.100.2:3031/api/Users')
+      .get(url1 + '/api/Users')
       .then(res => {
         setUsers(res.data.sort((a, b) => b.point - a.point));
-        setCurrentTop(getCurrentTop);
+        for (let x = 0; x < res.data.length; x++) {
+          if (res.data[x].id === user.id) {
+            setCurrentUser(res.data[x]);
+            x = x + 1;
+            setCurrentTop(x);
+            break;
+          }
+        }
       })
       .catch(error => {
         console.log(error);
       });
   };
 
-  const getCurrentTop = () => {
-    for (let x = 0; x < users.length; x++) {
-      if (users[x].id === user.id) {
-        setCurrentUser(users[x]);
-        x = x + 1;
-        return x;
-      }
-    }
-    return '';
-  };
-
-  useEffect(() => {
-    fetchAllUsers();
-  }, [users]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchAllUsers();
+      index = 0;
+    }, []),
+  );
 
   const Block = data => {
     index = index + 1;
@@ -65,7 +67,7 @@ const LeaderBoard = ({navigation}) => {
     );
   };
 
-  if (!users && !currentUser) {
+  if (!users && !currentUser && !currentTop) {
     return <Loading />;
   }
 

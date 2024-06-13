@@ -20,7 +20,8 @@ const Questions = ({navigation, route}) => {
   const [index, setIndex] = useState(0);
   const [haveAnswer, setHaveAnswer] = useState(false);
   const [score, setScore] = useState(0);
-
+  const url1 = 'http://10.30.230.117:3031';
+  const url2 = 'http://192.168.100.2:3031';
   const handleQuit = () => {
     Alert.alert(
       'Confirmation',
@@ -55,7 +56,7 @@ const Questions = ({navigation, route}) => {
   const handleFinish = async () => {
     await axios
       .put(
-        'http://192.168.100.2:3031/api/Users/AddPoint?id=' +
+        url1+'/api/Users/AddPoint?id=' +
           user.id +
           '&point=' +
           score,

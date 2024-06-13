@@ -9,6 +9,7 @@ import LottieView from 'lottie-react-native';
 
 const Home = ({navigation}) => {
   const user = useSelector(state => state.UserRedux.user);
+  console.log(user);
   const nameCategory = ['Sports', 'General Knowledge', 'Historical', 'Animal'];
   
   const capitalizeWords = str => {

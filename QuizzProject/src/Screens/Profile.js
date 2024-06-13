@@ -6,13 +6,15 @@ import {removeUser} from '../Store/Store';
 import LinearGradient from 'react-native-linear-gradient';
 import Loading from '../Components/Loading';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = ({navigation}) => {
   const [rendered, setRendered] = useState(false);
   const user = useSelector(state => state.UserRedux.user);
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
-
+  const url1 = 'http://10.30.230.117:3031';
+  const url2 = 'http://192.168.100.2:3031';
   const handleSignOut = async () => {
     try {
       await GoogleSignin.signOut();
@@ -26,7 +28,7 @@ const Profile = ({navigation}) => {
   const fecthUser = async data => {
     const email = data.email;
     await axios
-      .get('http://192.168.100.2:3031/api/Users/' + email)
+      .get(url1+'/api/Users/' + email)
       .then(res => {
         setUserInfo(res.data);
       })
@@ -35,9 +37,11 @@ const Profile = ({navigation}) => {
       });
   };
 
-  useEffect(() => {
-    fecthUser(user);
-  }, [userInfo]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fecthUser(user);
+    }, []),
+  );
 
   if (!userInfo) {
     return <Loading />;
