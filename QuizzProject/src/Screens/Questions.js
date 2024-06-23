@@ -56,7 +56,7 @@ const Questions = ({navigation, route}) => {
   const handleFinish = async () => {
     await axios
       .put(
-        url1+'/api/Users/AddPoint?id=' +
+        url2+'/api/Users/AddPoint?id=' +
           user.id +
           '&point=' +
           score,

@@ -28,7 +28,7 @@ const Profile = ({navigation}) => {
   const fecthUser = async data => {
     const email = data.email;
     await axios
-      .get(url1+'/api/Users/' + email)
+      .get(url2+'/api/Users/' + email)
       .then(res => {
         setUserInfo(res.data);
       })

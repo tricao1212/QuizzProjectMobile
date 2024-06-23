@@ -15,6 +15,7 @@ const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const url1 = 'http://10.30.230.117:3031';
+  const url3 = 'https://localhost:7117'
   const url2 = 'http://192.168.100.2:3031';
   GoogleSignin.configure({
     webClientId:
@@ -28,7 +29,7 @@ const Login = ({navigation}) => {
       avatarURL: data.photo,
     };
     await axios
-      .post(url1+'/api/Users/', newUser)
+      .post(url2+'/api/Users/', newUser)
       .then(res => {
         dispatch(setUser(res.data));
       })
@@ -38,13 +39,11 @@ const Login = ({navigation}) => {
   };
 
   const checkNewUser = async data => {
-    console.log(data);
     const email = data.email;
     await axios
-      .get(url1+'/api/Users/' + email)
+      .get(url2+'/api/Users/' + email)
       .then(async res => {
         const id = res.data.id;
-        console.log('ok');
         if (id == 0) {
           await createUser(data);
         }
@@ -65,7 +64,6 @@ const Login = ({navigation}) => {
       await auth().signInWithCredential(googleCredential);
       setLoading(true);
       const currentUser = await GoogleSignin.getCurrentUser();
-      console.log('ok');
       await checkNewUser(currentUser.user);
       setLoading(false);
       if (!loading) {

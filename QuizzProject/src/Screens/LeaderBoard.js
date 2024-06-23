@@ -8,16 +8,16 @@ import {useFocusEffect} from '@react-navigation/native';
 
 const LeaderBoard = ({navigation}) => {
   const user = useSelector(state => state.UserRedux.user);
+  const imageSource = require('../../imgs/account.png');
   const [currentUser, setCurrentUser] = useState({});
   const [users, setUsers] = useState([]);
   const url1 = 'http://10.30.230.117:3031';
   const url2 = 'http://192.168.100.2:3031';
-  let index = 0;
   const [currentTop, setCurrentTop] = useState();
 
   const fetchAllUsers = async () => {
     await axios
-      .get(url1 + '/api/Users')
+      .get(url2 + '/api/Users')
       .then(res => {
         setUsers(res.data.sort((a, b) => b.point - a.point));
         for (let x = 0; x < res.data.length; x++) {
@@ -37,31 +37,26 @@ const LeaderBoard = ({navigation}) => {
   useFocusEffect(
     React.useCallback(() => {
       fetchAllUsers();
-      index = 0;
     }, []),
   );
 
-  const Block = data => {
-    index = index + 1;
+  const block = ({item, index}) => {
     return (
       <View className="flex-row justify-around my-3 items-center bg-slate-50 rounded-xl py-5">
         <View className="items-center">
-          <Text>{index}</Text>
+          <Text>{index + 1}</Text>
         </View>
         <View className="items-center">
           <Image
-            source={{uri: data.data.avatarURL}}
+            source={item.avatarURL ? {uri: item.avatarURL} : imageSource}
             className="h-12 w-12 rounded-full"
-            onError={({nativeEvent: {error}}) => {
-              console.log(error);
-            }}
           />
         </View>
-        <View className="items-center">
-          <Text>{data.data.name}</Text>
+        <View className="items-center w-28">
+          <Text>{item.name}</Text>
         </View>
-        <View className="items-center">
-          <Text>{data.data.point}</Text>
+        <View className="items-center w-10">
+          <Text>{item.point}</Text>
         </View>
       </View>
     );
@@ -91,17 +86,14 @@ const LeaderBoard = ({navigation}) => {
             </View>
             <View className="items-center">
               <Image
-                source={{uri: currentUser.avatarURL}}
+                source={currentUser.avatarURL ? {uri: currentUser.avatarURL} : imageSource}
                 className="h-12 w-12 rounded-full"
-                onError={({nativeEvent: {error}}) => {
-                  console.log(error);
-                }}
               />
             </View>
-            <View className="items-center">
+            <View className="items-center w-28">
               <Text>{currentUser.name}</Text>
             </View>
-            <View className="items-center">
+            <View className="items-center w-10">
               <Text>{currentUser.point}</Text>
             </View>
           </View>
@@ -109,11 +101,7 @@ const LeaderBoard = ({navigation}) => {
         <Text className="text-center font-bold text-lg text-black">
           Rank table
         </Text>
-        <FlatList
-          data={users}
-          renderItem={({item}) => <Block data={item} />}
-          extraData={item => item.id}
-        />
+        <FlatList data={users} renderItem={block} extraData={item => item.id} />
       </SafeAreaView>
     </LinearGradient>
   );
